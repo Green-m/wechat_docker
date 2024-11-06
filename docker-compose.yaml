@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  wechat_novnc:
+    build:
+      context: .
+      dockerfile: dockerfile.novnc
+
+    container_name: wechat_novnc
+    restart: unless-stopped
+    environment:
+      AUTOCONNECT: true
+      VNC_PASSWORD: xxxxxx
+      # 使用 wxbot_linux 容器的名字作为 VNC_SERVER，这样可以直接通过 Docker 的内置 DNS 进行连接
+      VNC_SERVER: wxbot_linux:5900
+      VIEW_ONLY: false
+
+    ports:
+      - "127.0.0.1:26080:6080"
+
+    networks:
+      - wechat_network
+
+  wxbot_linux:
+    build:
+      context: .
+      dockerfile: Dockerfile.wechat
+
+    container_name: wxbot_linux
+    restart: unless-stopped
+    volumes:
+      - ./data:/root/xwechat_files
+      - ./vncpass:/root/wxbot
+
+    #ports:
+    #  - "25900:5900"
+
+    networks:
+      - wechat_network
+
+networks:
+  wechat_network:
+    driver: bridge
