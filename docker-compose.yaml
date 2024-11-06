@@ -16,7 +16,7 @@ services:
       VIEW_ONLY: false
 
     ports:
-      - "127.0.0.1:26080:6080"
+      - "26080:6080"
 
     networks:
       - wechat_network
