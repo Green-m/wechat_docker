@@ -24,7 +24,7 @@ services:
   wxbot_linux:
     build:
       context: .
-      dockerfile: Dockerfile.wechat
+      dockerfile: dockerfile.wechat
 
     container_name: wxbot_linux
     restart: unless-stopped

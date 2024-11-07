@@ -24,9 +24,9 @@ ENV LANG=zh_CN.UTF-8 \
 RUN mkdir /root/wxbot
 WORKDIR /root/wxbot/
 
-RUN wget  https://archive2.kylinos.cn/DEB/KYLIN_DEB/pool/main/deb/wechat/wechat-beta_4.0.0.21_amd64.deb -O /tmp/wechat-beta_4.0.0.21_amd64.deb
+RUN wget  https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb -O /tmp/wechatlinux_x64_64.deb
 COPY ./start.sh /root/wxbot/
 RUN chmod +x /root/wxbot/start.sh
-RUN dpkg -i /tmp/wechat-beta_4.0.0.21_amd64.deb
+RUN dpkg -i /tmp/wechatlinux_x64_64.deb
 
 CMD ["/bin/bash", "/root/wxbot/start.sh"]
