@@ -1,32 +1,16 @@
-FROM ubuntu:22.04
-ENV TZ=Asia/Shanghai
-ENV DEBIAN_FRONTEND=noninteractive
+FROM archlinux:latest
+RUN echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist
+RUN pacman -Syyu --noconfirm && pacman -Sy --noconfirm sudo && useradd -ms /bin/bash user && echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER user
+WORKDIR /home/user
+RUN sudo pacman -S --needed --noconfirm git base-devel && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm && sudo pacman -S --noconfirm x11vnc xorg-server-xvfb && yay -S --noconfirm wechat-bin && sudo pacman -S --noconfirm adobe-source-han-sans-cn-fonts adobe-source-han-serif-cn-fonts  wqy-microhei wqy-microhei-lite wqy-bitmapfont wqy-zenhei ttf-arphic-ukai ttf-arphic-uming noto-fonts-emoji && sudo pacman -S --noconfirm ibus ibus-rime ibus-libpinyin && sudo pacman -Sc
 
-RUN sed -i 's#http://.*ubuntu.com#http://mirrors.aliyun.com#g' /etc/apt/sources.list && \
-    apt update --allow-insecure-repositories --allow-unauthenticated && \
-    apt install xvfb wget x11vnc psmisc -y --allow-unauthenticated && \
-    apt-get install -y libglib2.0-0 libatomic1 libxrandr2 libxkbcommon0 libxkbcommon-dev libxkbcommon-x11-0 libxcb-glx0 libxcb-xkb1 libxcb-randr0 libxcb-icccm4 libxcb-shm0 libxcb-render0 libxcb-image0 libxcb-xfixes0 libxcb-shape0  libxcb-sync1 libxcb-render-util0 libxcb-keysyms1 libfontconfig1 libfreetype6 libdbus-1-3 libfontconfig1 libfreetype6 libdbus-1-3  libnss3 libnspr4  libx11-xcb1 libgbm1 libpango-1.0-0 libcairo2 libatk1.0-0  libasound2 libatk-bridge2.0-0 --allow-unauthenticated && \
-    apt-get install -y locales xfce4 fcitx5 fcitx5-chinese-addons dbus-x11 fonts-noto-cjk fonts-noto-color-emoji --allow-unauthenticated && \
-    locale-gen zh_CN.UTF-8 && \
-    update-locale LANG=zh_CN.UTF-8 && \
-    apt-get install -y ttf-wqy-zenhei ttf-wqy-microhei xfonts-wqy  --allow-unauthenticated
+ENV GTK_IM_MODULE=ibus \
+ QT_IM_MODULE=ibus  \
+ XMODIFIERS=@im=ibus 
+RUN sudo locale-gen zh_CN.UTF-8  && sudo dbus-uuidgen | sudo tee /var/lib/dbus/machine-id && mkdir -pv ~/.cache/xdgr
+COPY vncpass/start.sh /home/user/start.sh
+RUN sudo chmod +x /home/user/start.sh
 
-# start startxfce4
+CMD ["/bin/bash", "/home/user/start.sh"]
 
-ENV LANG=zh_CN.UTF-8 \
-    LANGUAGE=zh_CN:en_US:en \
-    LC_ALL=zh_CN.UTF-8 \
-    XMODIFIERS=@im=fcitx \
-    GTK_IM_MODULE=fcitx  \
-    QT_IM_MODULE=fcitx
-
-
-RUN mkdir /root/wxbot
-WORKDIR /root/wxbot/
-
-RUN wget  https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb -O /tmp/wechatlinux_x64_64.deb
-COPY ./vncpass/start.sh /root/wxbot/
-RUN chmod +x /root/wxbot/start.sh
-RUN dpkg -i /tmp/wechatlinux_x64_64.deb
-
-CMD ["/bin/bash", "/root/wxbot/start.sh"]
