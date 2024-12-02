@@ -25,8 +25,8 @@ services:
     container_name: wxbot_linux
     restart: unless-stopped
     volumes:
-      - ./data:/root/xwechat_files
-      - ./vncpass:/root/wxbot
+      - ./data:/home/user/xwechat_files
+      - ./vncpass:/home/user/wxbot
     networks:
       - wechat_network
   # If you are not using nginx, release the comments and comment out the nginx container

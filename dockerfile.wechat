@@ -1,7 +1,7 @@
 FROM archlinux:latest
 ENV TZ=Asia/Shanghai
 RUN echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist
-RUN pacman -Syyu --noconfirm && pacman -Sy --noconfirm sudo && useradd -ms /bin/bash user && echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN pacman -Syyu --noconfirm && pacman -Sy --noconfirm sudo && useradd -u 1000 -ms /bin/bash user && echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER user
 WORKDIR /home/user
 RUN sudo pacman -S --needed --noconfirm git base-devel && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm && sudo pacman -S --noconfirm x11vnc xorg-server-xvfb && yay -S --noconfirm wechat-bin && sudo pacman -S --noconfirm adobe-source-han-sans-cn-fonts adobe-source-han-serif-cn-fonts  wqy-microhei wqy-microhei-lite wqy-bitmapfont wqy-zenhei ttf-arphic-ukai ttf-arphic-uming noto-fonts-emoji && sudo pacman -S --noconfirm ibus ibus-rime ibus-libpinyin && sudo pacman -Sc
